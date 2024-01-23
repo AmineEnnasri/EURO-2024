@@ -1,6 +1,7 @@
 import random
 import pandas as pd
 import tkinter as tk
+import itertools
 from tkinter import ttk
 from euro import simulate_playoff_match, simulate_match, gagnant, perdant, simulate_group_stage, calculate_points_and_ranking, simulate_draw, simulate_group_schedule, get_best_third
 
@@ -32,16 +33,12 @@ for simulation in range(nombre_simulations):
 
     # Sélectionnez les équipes issues des matchs de barrage
     playoff_teams = teams_data[teams_data["playoff"].notna()]
-
-    # Dictionnaire pour stocker les résultats des groupes de barrage
     playoff_results = {group: [] for group in playoff_teams["playoff"].unique()}
 
     # Simulez les matchs de barrage
     for group, teams in playoff_teams.groupby("playoff"):
         group_teams = list(teams["name"])
         random.shuffle(group_teams)
-
-        # Simulez les matchs entre les équipes du groupe de barrage
         for i in range(3):
             for j in range(i + 1, 4):
                 team1_name, team2_name = group_teams[i], group_teams[j]
@@ -57,7 +54,7 @@ for simulation in range(nombre_simulations):
         qualified_team = max(results, key=lambda x: x[1])[0][0]
         qualified_teams[group] = qualified_team
 
-    # Affichez les équipes qualifiées
+    # les équipes qualifiées
     print("\nÉquipes qualifiées pour l'Euro :")
     for group, team in qualified_teams.items():
         print(f"Groupe {group}: {team}")
@@ -68,12 +65,12 @@ for simulation in range(nombre_simulations):
     group_stage_results = simulate_group_stage(draw_results, group_stage_schedule)
     standings = calculate_points_and_ranking(group_stage_results)
 
-    # Affichage des résultats du tirage au sort
+    # résultats du tirage au sort
     print("\nRésultats du tirage au sort :")
     for group, teams in draw_results.items():
         print(f"Groupe {group}: {teams}")
 
-    # Affichage du calendrier et des résultats de la phase de groupe
+    # calendrier et des résultats de la phase de groupe
     print("\nCalendrier de la phase de groupe :")
     for group, matches in group_stage_schedule.items():
         print(f"Groupe {group}: {matches}")
@@ -97,7 +94,6 @@ for simulation in range(nombre_simulations):
             equipes_stats.loc[equipes_stats["equipe"] == team, "nombre_matches"] += 3
 
 
-    # Extraire les équipes classées 1ères et 2èmes de chaque groupe
     group_winners = {}
     group_runners_up = {}
     for group, standing in standings.items():
@@ -109,8 +105,6 @@ for simulation in range(nombre_simulations):
 
     # Obtenir les meilleurs 3èmes parmi tous les groupes
     best_thirds = get_best_third(standings)
-
-    # Tirage au sort pour attribuer les meilleurs 3èmes à des matchs
     random.shuffle(best_thirds)
 
     # Matches des huitièmes de finale
@@ -125,7 +119,7 @@ for simulation in range(nombre_simulations):
         "44": (group_winners["D"], group_runners_up["F"]),
     }
 
-    # Afficher les équipes qualifiées
+    #  les équipes qualifiées
     print("-------------------------------------------------")
     print("\nÉquipes qualifiées pour les huitièmes de finale :")
     for match, teams in qualified_teams.items():
@@ -143,12 +137,11 @@ for simulation in range(nombre_simulations):
         equipes_stats.loc[equipes_stats["equipe"] == team1, "nombre_matches"] += 1
         equipes_stats.loc[equipes_stats["equipe"] == team2, "nombre_matches"] += 1
 
-    # Affichage des résultats des huitièmes de finale
+    # résultats des huitièmes de finale
     print("\nRésultats des huitièmes de finale :")
     for match, (teams, scores) in knockout_results.items():
         print(f"Match {match}: {teams[0]} {scores[0]} - {scores[1]} {teams[1]}")
 
-    # Utilisation de la fonction pour obtenir les équipes gagnantes des quarts de finale
     equipe_gagnante_37 = gagnant(knockout_results, "37")[0]
     equipe_gagnante_38 = gagnant(knockout_results, "38")[0]
     equipe_gagnante_39 = gagnant(knockout_results, "39")[0]
@@ -166,7 +159,7 @@ for simulation in range(nombre_simulations):
         "47": (equipe_gagnante_43, equipe_gagnante_44),
     }
 
-    # Afficher les matches des quarts de finale
+    # les matches des quarts de finale
     print("-------------------------------------------------")
     print("\nMatches des quarts de finale :")
     for match, teams in quarterfinal_matches.items():
@@ -183,13 +176,12 @@ for simulation in range(nombre_simulations):
         equipes_stats.loc[equipes_stats["equipe"] == team1, "nombre_matches"] += 1
         equipes_stats.loc[equipes_stats["equipe"] == team2, "nombre_matches"] += 1
 
-    # Affichage des résultats des quarts de finale
+    # résultats des quarts de finale
     print("\nRésultats des quarts de finale :")
     for match, (teams, scores) in quarter_finals_results.items():
         print(f"Match {match}: {teams[0]} {scores[0]} - {scores[1]} {teams[1]}")
 
 
-    # Utilisation de la fonction pour obtenir les équipes gagnantes des quarts de finale
     equipe_gagnante_45 = gagnant(quarter_finals_results, "45")[0]
     equipe_gagnante_46 = gagnant(quarter_finals_results, "46")[0]
     equipe_gagnante_47 = gagnant(quarter_finals_results, "47")[0]
@@ -202,7 +194,6 @@ for simulation in range(nombre_simulations):
         "50": (equipe_gagnante_47, equipe_gagnante_48),
     }
 
-    # Afficher les matches des quarts de finale
     print("-------------------------------------------------")
     print("\nMatches des demi de finale :")
     for match, teams in demifinal_matches.items():
@@ -219,21 +210,19 @@ for simulation in range(nombre_simulations):
         equipes_stats.loc[equipes_stats["equipe"] == team1, "nombre_matches"] += 1
         equipes_stats.loc[equipes_stats["equipe"] == team2, "nombre_matches"] += 1
 
-    # Affichage des résultats des quarts de finale
+    # résultats des quarts de finale
     print("\nRésultats des demi de finale :")
     for match, (teams, scores) in demi_finals_results.items():
         print(f"Match {match}: {teams[0]} {scores[0]} - {scores[1]} {teams[1]}")
 
-     # Utilisation de la fonction pour obtenir les équipes gagnantes des quarts de finale
     equipe_perdante_49 = perdant(demi_finals_results, "49")[0]
     equipe_perdante_50 = perdant(demi_finals_results, "50")[0]
 
-    # Matches des quarts de finale
+    #  quarts de finale
     classement_matches = {
         "51": (equipe_perdante_49, equipe_perdante_50),
     }
 
-    # Afficher les matches des quarts de finale
     print("-------------------------------------------------")
     print("\nMatche de classement (3eme Place) :")
     for match, teams in classement_matches.items():
@@ -254,21 +243,19 @@ for simulation in range(nombre_simulations):
     equipes_stats.loc[equipes_stats["equipe"] == equipe_gagnante_classement[0], "3eme Place"] += 1
 
 
-    # Affichage des résultats des quarts de finale
+    #  résultats des quarts de finale
     print("\nRésultat de matche de classemrent :")
     for match, (teams, scores) in classement_results.items():
         print(f"Match {match}: {teams[0]} {scores[0]} - {scores[1]} {teams[1]}")
 
-    # Utilisation de la fonction pour obtenir les équipes gagnantes des quarts de finale
     equipe_gagnante_49 = gagnant(demi_finals_results, "49")[0]
     equipe_gagnante_50 = gagnant(demi_finals_results, "50")[0]
 
-    # Matches des quarts de finale
     final_matches = {
         "52": (equipe_gagnante_49, equipe_gagnante_50),
     }
 
-    # Afficher les matches des quarts de finale
+    #  matches des quarts de finale
     print("-------------------------------------------------")
     print("\nMatche de finale :")
     for match, teams in final_matches.items():
@@ -281,25 +268,21 @@ for simulation in range(nombre_simulations):
         goals_team1, goals_team2 = simulate_match(teams_data.loc[teams_data["name"] == team1].iloc[0], teams_data.loc[teams_data["name"] == team2].iloc[0])
         final_results[match] = ((team1, team2), (goals_team1, goals_team2))
 
-    # Affichage des résultats des quarts de finale
+    # résultats des quarts de finale
     print("\nRésultat de la finale :")
     for match, (teams, scores) in final_results.items():
         print(f"Match {match}: {teams[0]} {scores[0]} - {scores[1]} {teams[1]}")
 
-    # À la fin de chaque simulation, mettez à jour les statistiques des équipes
     equipe_gagnante = gagnant(final_results, "52")
     equipe_finaliste = perdant(final_results, "52")
 
-    # Incrémentation des colonnes "gagnat" et "finaliste" pour l'équipe gagnante
     equipes_stats.loc[equipes_stats["equipe"] == equipe_gagnante[0], "1er Place"] += 1
 
     equipes_stats.loc[equipes_stats["equipe"] == equipe_gagnante[0], "nombre_matches"] += 1
     equipes_stats.loc[equipes_stats["equipe"] == equipe_finaliste[0], "nombre_matches"] += 1
 
-    # Incrémentation de la colonne "finaliste" pour l'équipe finaliste
     equipes_stats.loc[equipes_stats["equipe"] == equipe_finaliste[0], "2eme Place"] += 1
 
-    # Incrémentation de la colonne "nombre_buts" pour toutes les équipes
     equipes_stats.loc[equipes_stats["equipe"] == equipe_gagnante[0], "nombre_buts_finale"] += equipe_gagnante[1]
     equipes_stats.loc[equipes_stats["equipe"] == equipe_finaliste[0], "nombre_buts_finale"] += equipe_finaliste[1]
 
@@ -308,7 +291,6 @@ equipes_stats["moyenne_buts"] = (equipes_stats["nombre_buts"] / equipes_stats["n
 
 # Calcul du pourcentage de gain
 equipes_stats["pourcentage_gain"] = (equipes_stats["1er Place"] / nombre_simulations) * 100
-
 equipes_stats = equipes_stats.sort_values(by="pourcentage_gain", ascending=False)
 
 # Affichage des statistiques finales
