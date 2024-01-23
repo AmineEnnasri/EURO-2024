@@ -21,6 +21,10 @@ Après avoir exécuté la simulation, les résultats seront affichés dans le ta
 
 Équipe // 1er Place // 2eme Place // 3eme Place // Nombre de Buts // Nombre de Matches // Moyenne de Buts // Pourcentage de Gain
 
+## Exemple avec 10.000 compétitions
+
+![image](https://github.com/AmineEnnasri/EURO-2024/assets/147730987/a2cd6da7-616f-410e-839a-b2f614467f55)
+
 
 ## Tests Unitaires
 
@@ -28,3 +32,4 @@ Les tests unitaires sont inclus dans le fichier `test_euro_simulation.py`. Vous 
 
 ```bash
 pytest test_euro_simulation.py
+
