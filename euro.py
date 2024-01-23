@@ -4,9 +4,7 @@ import pandas as pd
 
 teams_data = pd.read_excel("countries.xlsx")
 
-# Ajoutez cette fonction pour simuler un match de barrage
 def simulate_playoff_match(team1, team2):
-    # Utilisez la même logique que pour les matchs de groupe
     mean_goals = 2.37
     std_dev_goals = 0.24
     goals = int(np.random.normal(mean_goals, std_dev_goals))
@@ -61,7 +59,6 @@ def simulate_group_schedule(groups):
     return schedule
 
 def simulate_match(team1, team2):
-    # Calcul de l'influence exponentielle du classement FIFA sur la moyenne des buts
     influence_factor = 0.2  # Ajustez ce facteur selon la sensibilité désirée à l'écart de classement
     mean_goals1 = np.exp(-influence_factor * team1["fifa_ranking"])
     mean_goals2 = np.exp(-influence_factor * team2["fifa_ranking"])
@@ -71,12 +68,10 @@ def simulate_match(team1, team2):
 
     max_random = random.randint(5, 7)
 
-    # Ajustement supplémentaire en fonction de l'écart de classement
     ranking_difference = abs(team1["fifa_ranking"] - team2["fifa_ranking"])
-    adjustment_factor = 0.2  # Ajustez ce facteur selon l'effet désiré de l'écart de classement sur l'écart des résultats
+    adjustment_factor = 0.2
     adjustment = max(1, ranking_difference * adjustment_factor)
 
-    # Utilisation d'une distribution normale tronquée pour générer le nombre de buts pour chaque équipe
     goals_team1 = max(0, min(round(np.random.normal(mean_goals1, 0.5) * adjustment), max_random))
     goals_team2 = max(0, min(round(np.random.normal(mean_goals2, 0.5) * adjustment), max_random))
 
@@ -117,7 +112,6 @@ def calculate_points_and_ranking(results):
         for match, (goals_team1, goals_team2) in matches:
             team1, team2 = match
 
-            # Initialisation des équipes si elles n'ont pas encore de points
             if team1 not in standings[group]["points"]:
                 standings[group]["points"][team1] = 0
                 standings[group]["goals_for"][team1] = 0
@@ -167,7 +161,6 @@ def get_best_third(standings):
     return best_thirds
 
 
-# Fonction pour obtenir le gagnant d'un match
 def gagnant(results, match_id):
     teams, scores = results[match_id]
     if scores[0] > scores[1]:
@@ -175,10 +168,8 @@ def gagnant(results, match_id):
     elif scores[0] < scores[1]:
         return teams[1], scores[1]
     else:
-        # En cas d'égalité, on pourrait envisager une prolongation ou une séance de tirs au but
         return None 
     
-# Fonction pour obtenir le perdant d'un match
 def perdant(results, match_id):
     teams, scores = results[match_id]
     if scores[0] < scores[1]:
@@ -186,5 +177,4 @@ def perdant(results, match_id):
     elif scores[0] > scores[1]:
         return teams[1], scores[1]
     else:
-        # En cas d'égalité, on pourrait envisager une prolongation ou une séance de tirs au but
         return None 

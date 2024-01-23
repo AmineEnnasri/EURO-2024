@@ -1,12 +1,13 @@
 import random
 import pandas as pd
-
+import tkinter as tk
+from tkinter import ttk
 from euro import simulate_playoff_match, simulate_match, gagnant, perdant, simulate_group_stage, calculate_points_and_ranking, simulate_draw, simulate_group_schedule, get_best_third
 
 teams_data = pd.read_excel("countries.xlsx")
 
 # Définir le nombre de simulations
-nombre_simulations = 100
+nombre_simulations = 1
 
 # Création de la table initiale
 equipes_stats = pd.DataFrame(data={
@@ -315,3 +316,65 @@ print("\n***********************************************************************
 print("\nStatistiques finales :\n")
 print(equipes_stats[["equipe", "1er Place", "2eme Place", "3eme Place", "nombre_buts", "nombre_matches", "moyenne_buts", "pourcentage_gain"]])
 
+
+def create_tournament_gui(draw_results, knockout_results, quarter_finals_results, demi_finals_results, final_results):
+    root = tk.Tk()
+    root.title("Résultats du Tournoi")
+    root.state('zoomed') 
+
+    tab_control = ttk.Notebook(root)
+
+    group_tab = ttk.Frame(tab_control)
+    tab_control.add(group_tab, text="Groupes")
+    create_group_tab(group_tab, draw_results)
+
+    knockout_tab = ttk.Frame(tab_control)
+    tab_control.add(knockout_tab, text="Huitièmes de finale")
+    create_knockout_tab(knockout_tab, knockout_results)
+
+    quarterfinals_tab = ttk.Frame(tab_control)
+    tab_control.add(quarterfinals_tab, text="Quarts de finale")
+    create_knockout_tab(quarterfinals_tab, quarter_finals_results)
+
+    semifinals_tab = ttk.Frame(tab_control)
+    tab_control.add(semifinals_tab, text="Demi-finales")
+    create_knockout_tab(semifinals_tab, demi_finals_results)
+
+    classement_tab = ttk.Frame(tab_control)
+    tab_control.add(classement_tab, text="3eme Place")
+    create_knockout_tab(classement_tab, classement_results)
+
+    final_tab = ttk.Frame(tab_control)
+    tab_control.add(final_tab, text="Finale")
+    create_knockout_tab(final_tab, final_results)
+
+    tab_control.pack(expand=1, fill="both")
+
+    def close_window():
+        root.destroy()
+
+    close_button = ttk.Button(root, text="Fermer", command=close_window)
+    close_button.pack(pady=10)
+
+    root.mainloop()
+
+def create_group_tab(group_tab, draw_results):
+    for group_name, group_teams in draw_results.items():
+        group_frame = ttk.Frame(group_tab)
+        group_frame.pack(side="left", padx=10, pady=10)
+
+        label_group = ttk.Label(group_frame, text=f"Groupe {group_name}", font=('Helvetica', 16, 'bold'))
+        label_group.grid(row=0, column=0, pady=10, columnspan=2)
+
+        for i, team in enumerate(group_teams, start=1):
+            ttk.Label(group_frame, text=f"{i}. {team}", font=('Helvetica', 12)).grid(row=i, column=0, sticky="w", padx=5, pady=2)
+
+
+def create_knockout_tab(tab, results):
+    for i, (match, (teams, scores)) in enumerate(results.items(), start=1):
+        ttk.Label(tab, text=f"Match {match}: {teams[0]} vs {teams[1]} ({scores[0]} - {scores[1]})", font=('Helvetica', 12)).pack(pady=5)
+
+
+
+if nombre_simulations == 1:
+    create_tournament_gui(draw_results, knockout_results, quarter_finals_results, demi_finals_results, final_results)
